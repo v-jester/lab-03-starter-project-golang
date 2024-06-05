@@ -1,11 +1,20 @@
-FROM golang:1.17-alpine
+FROM golang:1.21 AS builder
 
-WORKDIR /app
+WORKDIR /dir
+
+COPY go.mod go.sum ./
+
+RUN go mod download
 
 COPY . .
 
-RUN go build -o build/fizzbuzz
+RUN CGO_ENABLED=0 go build -o /build/fizzbuzz
 
-EXPOSE 8080
+FROM scratch
 
-CMD ["./build/fizzbuzz", "serve"]
+WORKDIR /app
+
+COPY --from=builder /dir/templates /app/templates
+COPY --from=builder /build/fizzbuzz /app
+
+CMD ["./fizzbuzz", "serve"]
