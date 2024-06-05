@@ -10,7 +10,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 go build -o /build/fizzbuzz
 
-FROM scratch
+FROM gcr.io/distroless/base-debian10
 
 WORKDIR /app
 
